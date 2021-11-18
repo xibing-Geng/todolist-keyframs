@@ -14,16 +14,17 @@ export default {
         }
     },
     // 接收从App传来的方法addTodo，接收后出现在vc上，那MyHeader的模板、方法中都可以直接使用
-    props:['addTodo','deleteTodo'],
+    // props:['addTodo'],
     methods:{
         // 添加
         addobj(){
             // 如果为空则提示，并且驳回后续的添加操作
-            if(!this.title) return alert('输入不能为空弟！')
+            if(!this.title) return alert('输入不能为空滴！')
             // 将用户输入的内容包装成一个todo对象，再加入到todo数组中，使用nanoid模块来生成id
             const todoobj={id:nanoid(),title:this.title,done:false}
             // 调用App传过来的方法并把数据对象传进去（App中会把数据存到data数组中）
-            this.addTodo(todoobj)
+            // this.addTodo(todoobj)
+            this.$emit('addTodo',todoobj)
             // 将输入框置空
             this.title=''
         }

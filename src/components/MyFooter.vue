@@ -18,7 +18,8 @@
 
 <script>
 export default {
-  props:['todos',"checkIsOrNo",'clearAllDone'],
+  // props:['todos','checkIsOrNo','clearAllDone'],
+  props:['todos'],
   computed:{
     total(){
       return this.todos.length
@@ -40,7 +41,8 @@ export default {
       },
       // set中的value也就是新的值，由于是input，所以这里的value也就是选中框的选中状态
       set(value){
-        this.checkIsOrNo(value)
+        // this.checkIsOrNo(value)
+        this.$emit('checkIsOrNo',value)
       }
     }
   },
@@ -50,7 +52,8 @@ export default {
       this.checkIsOrNo( e.target.checked )
     }, */
     clearAll(){
-      if(confirm('真的要清空已完成的？')) this.clearAllDone()
+      // if(confirm('真的要清空已完成的？')) this.clearAllDone()
+      if(confirm('真的要清空已完成的？')) this.$emit('clearAllDone')
     }
   }
 }
