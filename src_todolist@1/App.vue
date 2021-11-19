@@ -2,22 +2,18 @@
 <div id="root">
   <div class="todo-container">
     <div class="todo-wrap">
-        <!-- <MyHeader :addTodo="addTodo"></MyHeader> -->
-        <MyHeader @addTodo="addTodo"></MyHeader>
-        <MyList :todos="todos"></MyList>
-        <!-- <MyFooter :todos="todos" :checkIsOrNo="checkIsOrNo" :clearAllDone="clearAllDone"></MyFooter> -->
-        <MyFooter :todos="todos" @checkIsOrNo="checkIsOrNo" @clearAllDone="clearAllDone"></MyFooter>
+        <MyHeader :addTodo="addTodo"></MyHeader>
+        <MyList :todos="todos" :changeBox="changeBox" :deleteTodo="deleteTodo"></MyList>
+        <MyFooter :todos="todos" :checkIsOrNo="checkIsOrNo" :clearAllDone="clearAllDone"></MyFooter>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import pubsub from 'pubsub-js'
 import MyHeader from './components/MyHeader.vue'
 import MyList from './components/MyList.vue'
 import MyFooter from './components/MyFooter.vue'
-
 export default {
     name:'App',
     components:{
@@ -25,10 +21,15 @@ export default {
     },
     data(){
         return{
-            // todos:[]
-            // 从localStorage中读取todos  首次使用没有localStorage，也就todos对应的是Null，那么在解析todos的length时没有这个就会报错
-            // 所以用一个或者的关系，前者为真则先走前者，前者为假再走后者
-            todos:JSON.parse(localStorage.getItem('todos')) || []
+            todos:[
+                {
+                    id:'001',title:'学习前端',done:true
+                },{
+                    id:'002',title:'进击西二旗',done:false
+                },{
+                    id:'003',title:'热爱大自然',done:true
+                }
+            ]
         }
     },
     // 数据在哪里，对数据进行操作的函数就写在哪个组件里
@@ -45,7 +46,7 @@ export default {
         },
         // 删除一个todo对象，由于filter方法起过滤作用，但是不会改变原数组，Vue也就不会侦测到，也就不会做内容的更新
         // 所以可以把筛选后的结果（排除删除的那一项）赋值给原数组，实现了原数组的更改，Vue重新渲染模板
-        deleteTodo(_,id){
+        deleteTodo(id){
         /*this.todos= this.todos.filter((todo)=>{
             return todo.id!==id
           }) */
@@ -61,28 +62,7 @@ export default {
         clearAllDone(){
           this.todos=this.todos.filter((todo)=> !todo.done)
         }        
-   },
-  //  使用watch监听todos是否有更改，有更改的话就把新的值赋给它，把这个值存到localStorage中（目的：刷新不丢）
-  watch:{
-    todos:{
-      // 为了可以侦测到todos内部每个todo对象的选中状态，添加deep来做深度监听
-      deep:true,
-      // 由于deep配置项的存在，这里就不能再使用简写形式了，就得借助handler来处理逻辑
-      handler(value){
-          localStorage.setItem('todos',JSON.stringify(value))
-      } 
-    }
-  },
-  mounted(){
-    // 使用全局事件总线完成复选框改变
-    this.$bus.$on('changeBox',this.changeBox)
-    // 使用pubsub消息订阅来完成删除操作
-    this.pid=pubsub.subscribe('deleteId',this.deleteTodo)
-  },
-  beforeDestroy(){
-    // 在组件销毁之前取消订阅
-    pubsub.unsubscribe(this.pid)
-  }
+   }
 }
 </script>
 

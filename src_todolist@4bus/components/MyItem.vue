@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import pubsub from 'pubsub-js'
 export default {
     name:'MyItem',
     // 子组件接收绑定的属性todo
@@ -21,8 +20,8 @@ export default {
     methods:{
        // 删除
         deleteobj(id){
-            // 删除时作出提示，并发布删除条目的消息，传递要删除条目的id
-            if(confirm('确定要删除这条？')) pubsub.publish('deleteId',id)
+            // 删除时作出提示
+            if(confirm('确定要删除这条？')) this.$bus.$emit('deleteTodo',id)
         },
         changeBox(id){
           this.$bus.$emit('changeBox',id)

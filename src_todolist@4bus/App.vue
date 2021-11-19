@@ -13,11 +13,9 @@
 </template>
 
 <script>
-import pubsub from 'pubsub-js'
 import MyHeader from './components/MyHeader.vue'
 import MyList from './components/MyList.vue'
 import MyFooter from './components/MyFooter.vue'
-
 export default {
     name:'App',
     components:{
@@ -45,7 +43,7 @@ export default {
         },
         // 删除一个todo对象，由于filter方法起过滤作用，但是不会改变原数组，Vue也就不会侦测到，也就不会做内容的更新
         // 所以可以把筛选后的结果（排除删除的那一项）赋值给原数组，实现了原数组的更改，Vue重新渲染模板
-        deleteTodo(_,id){
+        deleteTodo(id){
         /*this.todos= this.todos.filter((todo)=>{
             return todo.id!==id
           }) */
@@ -73,15 +71,10 @@ export default {
       } 
     }
   },
+  // 使用全局事件总线
   mounted(){
-    // 使用全局事件总线完成复选框改变
     this.$bus.$on('changeBox',this.changeBox)
-    // 使用pubsub消息订阅来完成删除操作
-    this.pid=pubsub.subscribe('deleteId',this.deleteTodo)
-  },
-  beforeDestroy(){
-    // 在组件销毁之前取消订阅
-    pubsub.unsubscribe(this.pid)
+    this.$bus.$on('deleteTodo',this.deleteTodo)
   }
 }
 </script>
