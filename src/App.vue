@@ -60,6 +60,12 @@ export default {
         // 清空所有已完成的条目
         clearAllDone(){
           this.todos=this.todos.filter((todo)=> !todo.done)
+        },
+        // 修改todo内容
+        updateTodo(id,value){
+          this.todos.forEach((todo)=>{
+            if(todo.id===id) todo.title=value
+          })
         }        
    },
   //  使用watch监听todos是否有更改，有更改的话就把新的值赋给它，把这个值存到localStorage中（目的：刷新不丢）
@@ -78,9 +84,13 @@ export default {
     this.$bus.$on('changeBox',this.changeBox)
     // 使用pubsub消息订阅来完成删除操作
     this.pid=pubsub.subscribe('deleteId',this.deleteTodo)
+    // 使用全局事件总线来完成input编辑修改功能
+    this.$bus.$on('updateTodo',this.updateTodo)
   },
   beforeDestroy(){
-    // 在组件销毁之前取消订阅
+    this.$bus.$off('changeBox')
+    this.$bus.$off('updateTodo')
+    // 在组件销毁之前取消订阅，以消息id来定位消息
     pubsub.unsubscribe(this.pid)
   }
 }
@@ -108,6 +118,13 @@ body {
   color: #fff;
   background-color: #da4f49;
   border: 1px solid #bd362f;
+}
+
+.btn-edit {
+  color: #fff;
+  background-color: #2382f0;
+  border: 1px solid #3e22a1;
+  margin-right: 5px;
 }
 
 .btn-danger:hover {

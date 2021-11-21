@@ -1,9 +1,0 @@
-这个src时对src_todolist的优化
-让数据不再完全依据数组，可以实现将数组存到本地上，借助localStorage来保存数据
-    页面加载时会有两个数据源可以选择
-        优先被赋值为localStorage中的数据
-        如果localStorage中的数据不存在就会被赋值为一个空数组
-        优先选择的置于运算符前，它为真就不再选择第二个赋值
-通过watch对localStorage和数组todos建立关系
-    当Header中执行添加操作时，数据会加到todos中，而todos有了改动也就会触发watch监视
-    watch将改变后的todos又替换掉localStorage中的旧数据

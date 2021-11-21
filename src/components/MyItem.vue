@@ -6,9 +6,20 @@
             Vue不建议修改props数据，done作为todo的属性，虽内部属性改变，但是对象没有变（对象地址没变），
             Vue不做深层监测，所以不报错，如果直接暴力改对象，或者改某个单一的props值，控制台会报错 -->
             <!-- <input type="checkbox" v-model="todo.done"> -->
-            <span>{{todo.title}}</span>
+            <span v-show="!todo.isEdit">{{todo.title}}</span>
+            <!-- 失去焦点或者按下回车后都可以进行内容的提交 -->
+            <input type="text" 
+              v-show="todo.isEdit" 
+              :value="todo.title" 
+              @blur="handleBlur(todo,$event)" 
+              @keyup.enter="handleBlur(todo,$event)"
+              >
           </label>
           <button class="btn btn-danger" @click="deleteobj(todo.id)">删除</button>
+          <button class="btn btn-edit" @click="editobj(todo)">编辑</button>
+          <!-- 有个问题注意下：在点击编辑后input会出现，但是当input失去焦点时才会提交更新的内容，
+          不过input一出来可是没有做焦点获取处理，所以还得去点一下再点别处才能完成提交内容，
+          如果通过伴随编辑按钮的点击事件让input获取焦点也可以，不过要逐层去获取到这个DOM元素，又回归了DOM操作 -->
         </li>
 </template>
 
@@ -26,6 +37,22 @@ export default {
         },
         changeBox(id){
           this.$bus.$emit('changeBox',id)
+        },
+        // 点击编辑按钮之后的回调
+        editobj(todo){
+          // 出发时间后先判断它上面存不存在idEdit属性，不存在就添加
+          // 不能使用!todo.isEdit，这样是对它上面的值进行读取，不是判断有没有
+          if(Object.prototype.hasOwnProperty.call(todo,"isEdit")){
+            todo.isEdit=true
+          }else{
+            // 没有这个属性就通过set来设置，否则Vue无法通过get来获取到其值的变化
+            this.$set(todo,'isEdit',true)
+          }
+        },
+        // input失去焦点时的回调，更改编辑状态，通过事件对象e来获取其value值
+        handleBlur(todo,e){
+          todo.isEdit=false
+          this.$bus.$emit('updateTodo',todo.id,e.target.value)
         }
     }
 }
