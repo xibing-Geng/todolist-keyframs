@@ -13,6 +13,7 @@
               :value="todo.title" 
               @blur="handleBlur(todo,$event)" 
               @keyup.enter="handleBlur(todo,$event)"
+              ref="editInp"
               >
           </label>
           <button class="btn btn-danger" @click="deleteobj(todo.id)">删除</button>
@@ -48,10 +49,20 @@ export default {
             // 没有这个属性就通过set来设置，否则Vue无法通过get来获取到其值的变化
             this.$set(todo,'isEdit',true)
           }
+          // 通过nextTick来实现input获取焦点/或者也可以使用定时器，借助异步操作
+          /* setTimeout(function(){
+            this.$refs.editInp.focus()
+          }) */
+          // nextTick作用在于，在下一次DOM更新结束后执行它的回调
+          // 当改变数据后，要基于更新后的DOM进行某些操作时，在nextTick的回调中执行
+          this.$nextTick(function(){
+            this.$refs.editInp.focus()
+          })
         },
         // input失去焦点时的回调，更改编辑状态，通过事件对象e来获取其value值
         handleBlur(todo,e){
           todo.isEdit=false
+          // 通过全局事件总线完成传值
           this.$bus.$emit('updateTodo',todo.id,e.target.value)
         }
     }
