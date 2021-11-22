@@ -1,4 +1,5 @@
 <template>
+  <!-- <transition name="comeGo" appear> -->
         <li>
           <label>
             <input type="checkbox" :checked="todo.done" @change="changeBox(todo.id)"/>
@@ -22,6 +23,7 @@
           不过input一出来可是没有做焦点获取处理，所以还得去点一下再点别处才能完成提交内容，
           如果通过伴随编辑按钮的点击事件让input获取焦点也可以，不过要逐层去获取到这个DOM元素，又回归了DOM操作 -->
         </li>
+  <!-- </transition> -->
 </template>
 
 <script>
@@ -112,4 +114,10 @@ li:hover{
 li:hover button{
   display: block;
 }
+/* 编写动画效果 */
+/* @keyframes comeGo{
+  from{transform: translateX(100%);}to{transform: translateX(0px);}
+}
+.comeGo-enter-active{animation: comeGo 0.5s;}
+.comeGo-leave-active{animation: comeGo 0.5s reverse;} */
 </style>
